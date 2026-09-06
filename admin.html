@@ -80,12 +80,12 @@
   .lock-note{ color:#4d5449; font-size:11px; margin-top:16px; line-height:1.5; }
 
   /* ---------- dashboard ---------- */
-  #dashboard{ display:none; max-width: 1080px; margin: 0 auto; padding: 30px 18px 70px; }
+  #dashboard{ display:none; max-width: 1120px; margin: 0 auto; padding: 30px 18px 70px; }
   #dashboard.show{ display:block; }
 
   .top{
     display:flex; align-items:center; justify-content:space-between;
-    margin-bottom: 26px; flex-wrap:wrap; gap:12px;
+    margin-bottom: 22px; flex-wrap:wrap; gap:12px;
   }
   .top .brand{ display:flex; align-items:center; gap:12px; }
   .top img{ width:46px; height:46px; object-fit:contain; }
@@ -107,10 +107,19 @@
     letter-spacing:0.04em; border-radius:4px; cursor:pointer;
   }
 
-  /* stat cards */
-  .stats{
-    display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 26px;
+  /* section tabs */
+  .section-tabs{ display:flex; gap: 8px; margin-bottom: 20px; }
+  .section-tabs button{
+    background: var(--panel); border: 1px solid var(--line); color: var(--muted);
+    font-weight: 700; font-size: 13px; padding: 11px 18px; border-radius: 6px; cursor: pointer;
   }
+  .section-tabs button.active{ border-color: var(--green); color: var(--green); background: rgba(163,230,53,0.08); }
+
+  .section-panel{ display:none; }
+  .section-panel.active{ display:block; }
+
+  /* stat cards */
+  .stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
   .stat{
     background: linear-gradient(180deg, var(--panel), var(--panel-2));
     border:1px solid var(--line);
@@ -150,7 +159,7 @@
     border-radius:6px;
     overflow-x:auto;
   }
-  table{ width:100%; border-collapse: collapse; font-size:13px; min-width: 760px; }
+  table{ width:100%; border-collapse: collapse; font-size:13px; min-width: 900px; }
   thead th{
     text-align:left; padding: 12px 14px; color:var(--muted);
     text-transform:uppercase; font-size:11px; letter-spacing:0.04em;
@@ -167,14 +176,67 @@
   .pill.mulher{ background: rgba(255,120,190,0.14); color:#ff9fce; }
   .pill.minor{ background: rgba(255,200,80,0.14); color:#ffd27a; margin-left:6px; }
   .resp-line{ font-size:11px; color:var(--muted); margin-top:3px; }
-  .del-btn{
-    background:transparent; border:1px solid var(--line); color: var(--danger);
+  .obs-line{ font-size:12px; color:var(--white); max-width: 220px; white-space: normal; }
+  .row-actions{ display:flex; gap:6px; white-space:nowrap; }
+  .action-btn{
+    background:transparent; border:1px solid var(--line); color: var(--muted);
     font-size:11px; padding: 5px 9px; border-radius:4px; cursor:pointer;
   }
-  .del-btn:hover{ border-color: var(--danger); background: rgba(255,90,90,0.08); }
+  .action-btn.edit:hover{ border-color: var(--green); color: var(--green); }
+  .action-btn.del:hover{ border-color: var(--danger); color: var(--danger); }
 
   .empty-state{ text-align:center; padding: 50px 20px; color:var(--muted); }
   .loading{ text-align:center; padding: 50px 20px; color:var(--muted); }
+
+  /* ---------- edit modal ---------- */
+  .modal-overlay{
+    display:none;
+    position: fixed; inset:0;
+    background: rgba(0,0,0,0.65);
+    align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    width:100%; max-width: 520px;
+    max-height: 88vh;
+    overflow-y:auto;
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px;
+  }
+  .modal h2{
+    font-family:'Anton', sans-serif; font-weight:400; text-transform:uppercase;
+    font-size:20px; margin: 0 0 18px;
+  }
+  .modal .field{ margin-bottom: 14px; display:flex; flex-direction:column; gap:6px; }
+  .modal label{ font-size:12px; color:var(--muted); font-weight:600; }
+  .modal input, .modal select, .modal textarea{
+    background:#0b0e08; border:1px solid var(--line); color:var(--white);
+    padding: 10px 12px; border-radius:4px; font-size:14px; font-family:inherit;
+  }
+  .modal textarea{ min-height: 70px; resize: vertical; }
+  .modal .row2{ display:flex; gap:12px; }
+  .modal .row2 .field{ flex:1; }
+  .modal .days-check{ display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+  .modal .days-check label{
+    background:#0b0e08; border:1px solid var(--line); padding:6px 10px; border-radius:4px;
+    font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;
+  }
+  .modal .member-edit-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .modal .member-edit-row input{ flex:1; }
+  .modal .member-edit-row input.age{ max-width: 80px; flex: 0 0 80px; }
+  .modal .member-edit-row button{
+    background:transparent; border:1px solid var(--line); color:var(--danger);
+    border-radius:4px; width:38px; cursor:pointer;
+  }
+  .modal-actions{ display:flex; gap:10px; margin-top: 18px; }
+  .modal-actions button{ flex:1; padding: 12px; border-radius:4px; font-weight:700; font-size:13px; cursor:pointer; border:none; text-transform:uppercase; }
+  .modal-actions .save-btn{ background: var(--green); color:#0a1000; }
+  .modal-actions .cancel-btn{ background: transparent; border:1px solid var(--line); color:var(--muted); }
+  .modal-msg{ font-size:12px; color:var(--danger); margin-top:8px; min-height:14px; }
 
   @media (max-width: 700px){
     .stats{ grid-template-columns: repeat(2,1fr); }
@@ -192,7 +254,7 @@
     <input type="password" id="lockPassword" placeholder="Senha">
     <button id="lockBtn">Entrar</button>
     <div class="lock-error" id="lockError"></div>
-    <div class="lock-note">Esta senha é apenas uma trava de tela — troque-a no código-fonte e veja a nota de segurança enviada junto com este arquivo.</div>
+    <div class="lock-note">Esta senha é apenas uma trava de tela — quem tiver acesso ao código-fonte consegue vê-la. Para proteção real dos dados, ajuste as regras do Firestore.</div>
   </div>
 </div>
 
@@ -212,69 +274,200 @@
     </div>
   </div>
 
-  <div class="stats">
-    <div class="stat"><div class="num" id="statTotal">0</div><div class="label">Total inscritos</div></div>
-    <div class="stat"><div class="num" id="statHomens">0</div><div class="label">Homens</div></div>
-    <div class="stat"><div class="num" id="statMulheres">0</div><div class="label">Mulheres</div></div>
-    <div class="stat"><div class="num" id="statMenores">0</div><div class="label">Menores de 18</div></div>
+  <div class="section-tabs">
+    <button type="button" id="sectionCampBtn" class="active">Acampamento completo</button>
+    <button type="button" id="sectionFamilyBtn">Só domingo (famílias)</button>
   </div>
 
-  <div class="filters">
-    <div class="field search">
-      <label>Buscar por nome</label>
-      <input type="text" id="fSearch" placeholder="Digite um nome...">
+  <!-- ============ SEÇÃO: ACAMPAMENTO COMPLETO ============ -->
+  <div class="section-panel active" id="sectionCamp">
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="statTotal">0</div><div class="label">Total inscritos</div></div>
+      <div class="stat"><div class="num" id="statHomens">0</div><div class="label">Homens</div></div>
+      <div class="stat"><div class="num" id="statMulheres">0</div><div class="label">Mulheres</div></div>
+      <div class="stat"><div class="num" id="statMenores">0</div><div class="label">Menores de 18</div></div>
     </div>
-    <div class="field">
-      <label>Sexo</label>
-      <select id="fSexo">
-        <option value="">Todos</option>
-        <option value="Homem">Homem</option>
-        <option value="Mulher">Mulher</option>
-      </select>
+
+    <div class="filters">
+      <div class="field search">
+        <label>Buscar por nome</label>
+        <input type="text" id="fSearch" placeholder="Digite um nome...">
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="fSexo">
+          <option value="">Todos</option>
+          <option value="Homem">Homem</option>
+          <option value="Mulher">Mulher</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Idade mín.</label>
+        <input type="number" id="fIdadeMin" placeholder="0" min="0">
+      </div>
+      <div class="field">
+        <label>Idade máx.</label>
+        <input type="number" id="fIdadeMax" placeholder="120" min="0">
+      </div>
+      <div class="field">
+        <label>Faixa</label>
+        <select id="fMenor">
+          <option value="">Todos</option>
+          <option value="menor">Menores de 18</option>
+          <option value="maior">18 ou mais</option>
+        </select>
+      </div>
+      <button class="btn-outline clear" id="clearFilters">Limpar filtros</button>
     </div>
-    <div class="field">
-      <label>Idade mín.</label>
-      <input type="number" id="fIdadeMin" placeholder="0" min="0">
+
+    <div class="table-wrap">
+      <div class="loading" id="loadingState">Carregando inscrições...</div>
+      <table id="dataTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Nome completo</th>
+            <th>Idade</th>
+            <th>Sexo</th>
+            <th>Bairro</th>
+            <th>Telefone</th>
+            <th>Dias</th>
+            <th>Observações</th>
+            <th>Inscrito em</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">Nenhuma inscrição encontrada com esses filtros.</div>
     </div>
-    <div class="field">
-      <label>Idade máx.</label>
-      <input type="number" id="fIdadeMax" placeholder="120" min="0">
-    </div>
-    <div class="field">
-      <label>Faixa</label>
-      <select id="fMenor">
-        <option value="">Todos</option>
-        <option value="menor">Menores de 18</option>
-        <option value="maior">18 ou mais</option>
-      </select>
-    </div>
-    <button class="btn-outline clear" id="clearFilters">Limpar filtros</button>
   </div>
 
-  <div class="table-wrap">
-    <div class="loading" id="loadingState">Carregando inscrições...</div>
-    <table id="dataTable" style="display:none;">
-      <thead>
-        <tr>
-          <th>Nome completo</th>
-          <th>Idade</th>
-          <th>Sexo</th>
-          <th>Bairro</th>
-          <th>Telefone</th>
-          <th>Inscrito em</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-    <div class="empty-state" id="emptyState" style="display:none;">Nenhuma inscrição encontrada com esses filtros.</div>
+  <!-- ============ SEÇÃO: SÓ DOMINGO (FAMÍLIAS) ============ -->
+  <div class="section-panel" id="sectionFamily">
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="statFamTotal">0</div><div class="label">Famílias cadastradas</div></div>
+      <div class="stat"><div class="num" id="statFamPessoas">0</div><div class="label">Total de pessoas</div></div>
+    </div>
+
+    <div class="filters">
+      <div class="field search">
+        <label>Buscar por responsável</label>
+        <input type="text" id="fFamSearch" placeholder="Digite um nome...">
+      </div>
+      <button class="btn-outline clear" id="clearFamFilters">Limpar filtros</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="loading" id="famLoadingState">Carregando famílias...</div>
+      <table id="famDataTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Responsável</th>
+            <th>Telefone</th>
+            <th>Quem vai (nome / idade)</th>
+            <th>Total</th>
+            <th>Cadastrado em</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="famTableBody"></tbody>
+      </table>
+      <div class="empty-state" id="famEmptyState" style="display:none;">Nenhuma família cadastrada ainda.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== MODAL: EDITAR INSCRIÇÃO (acampamento) ===== -->
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal">
+    <h2>Editar inscrição</h2>
+    <div class="field">
+      <label>Nome completo</label>
+      <input type="text" id="editNome">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Idade</label>
+        <input type="number" id="editIdade" min="1" max="120">
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="editSexo">
+          <option value="Homem">Homem</option>
+          <option value="Mulher">Mulher</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Bairro</label>
+        <input type="text" id="editBairro">
+      </div>
+      <div class="field">
+        <label>Telefone</label>
+        <input type="text" id="editTelefone">
+      </div>
+    </div>
+    <div class="field">
+      <label>Dias de participação</label>
+      <div class="days-check">
+        <label><input type="checkbox" value="Sexta" class="editDia"> Sexta</label>
+        <label><input type="checkbox" value="Sábado" class="editDia"> Sábado</label>
+        <label><input type="checkbox" value="Domingo" class="editDia"> Domingo</label>
+        <label><input type="checkbox" value="Segunda" class="editDia"> Segunda</label>
+        <label><input type="checkbox" value="Terça" class="editDia"> Terça</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Observações</label>
+      <textarea id="editObs"></textarea>
+    </div>
+    <div class="field" id="editMinorWrap">
+      <label>Nome do responsável (menores de 18)</label>
+      <input type="text" id="editRespNome">
+      <label style="margin-top:8px;">Telefone do responsável</label>
+      <input type="text" id="editRespTelefone">
+    </div>
+    <div class="modal-msg" id="editModalMsg"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" id="editCancelBtn">Cancelar</button>
+      <button class="save-btn" id="editSaveBtn">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: EDITAR FAMÍLIA (domingo) ===== -->
+<div class="modal-overlay" id="famEditModalOverlay">
+  <div class="modal">
+    <h2>Editar família</h2>
+    <div class="field">
+      <label>Nome do responsável</label>
+      <input type="text" id="famEditNome">
+    </div>
+    <div class="field">
+      <label>Telefone</label>
+      <input type="text" id="famEditTelefone">
+    </div>
+    <div class="field">
+      <label>Quem vai (nome e idade)</label>
+      <div id="famEditMembers"></div>
+      <button type="button" class="btn-outline" id="famEditAddMember" style="margin-top:6px;">+ Adicionar pessoa</button>
+    </div>
+    <div class="modal-msg" id="famEditModalMsg"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" id="famEditCancelBtn">Cancelar</button>
+      <button class="save-btn" id="famEditSaveBtn">Salvar alterações</button>
+    </div>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getFirestore, collection, getDocs, deleteDoc, doc, orderBy, query
+    getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, orderBy, query
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -289,9 +482,10 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const inscricoesRef = collection(db, "inscricoes");
+  const domingoRef = collection(db, "domingoFamilias");
 
   // ---------- Lock screen (UI gate only — see security note) ----------
-  const ADMIN_PASSWORD = "leds27admin"; // TROQUE ESTA SENHA
+  const ADMIN_PASSWORD = "leds27"; // TROQUE ESTA SENHA
 
   const lockScreen = document.getElementById("lockScreen");
   const dashboard = document.getElementById("dashboard");
@@ -304,6 +498,7 @@
       lockScreen.style.display = "none";
       dashboard.classList.add("show");
       loadData();
+      loadFamilyData();
     }else{
       lockError.textContent = "Senha incorreta.";
     }
@@ -311,14 +506,41 @@
   lockBtn.addEventListener("click", tryUnlock);
   lockPassword.addEventListener("keydown", (e) => { if(e.key === "Enter") tryUnlock(); });
 
-  // ---------- Data ----------
-  let allRecords = [];
+  // ---------- Section tabs ----------
+  const sectionCampBtn = document.getElementById("sectionCampBtn");
+  const sectionFamilyBtn = document.getElementById("sectionFamilyBtn");
+  const sectionCamp = document.getElementById("sectionCamp");
+  const sectionFamily = document.getElementById("sectionFamily");
+
+  sectionCampBtn.addEventListener("click", () => {
+    sectionCampBtn.classList.add("active");
+    sectionFamilyBtn.classList.remove("active");
+    sectionCamp.classList.add("active");
+    sectionFamily.classList.remove("active");
+  });
+  sectionFamilyBtn.addEventListener("click", () => {
+    sectionFamilyBtn.classList.add("active");
+    sectionCampBtn.classList.remove("active");
+    sectionFamily.classList.add("active");
+    sectionCamp.classList.remove("active");
+  });
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
   function formatDate(ts){
     if(!ts || !ts.toDate) return "—";
     const d = ts.toDate();
     return d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR", {hour:'2-digit', minute:'2-digit'});
   }
+
+  // ================= ACAMPAMENTO COMPLETO =================
+  let allRecords = [];
 
   async function loadData(){
     document.getElementById("loadingState").style.display = "block";
@@ -367,6 +589,12 @@
     renderTable(filtered);
   }
 
+  function diasResumo(r){
+    if(!r.diasParticipacao || r.diasParticipacao.length === 0) return "—";
+    if(r.diasModo === "todos" || r.diasParticipacao.length >= 5) return "Todos os dias";
+    return r.diasParticipacao.join(", ");
+  }
+
   function renderTable(records){
     const tbody = document.getElementById("tableBody");
     const table = document.getElementById("dataTable");
@@ -395,12 +623,19 @@
         </td>
         <td>${escapeHtml(r.bairro || "—")}</td>
         <td>${escapeHtml(r.telefone || "—")}</td>
+        <td>${escapeHtml(diasResumo(r))}</td>
+        <td class="obs-line">${r.observacoes ? escapeHtml(r.observacoes) : "—"}</td>
         <td>${formatDate(r.criadoEm)}</td>
-        <td><button class="del-btn" data-id="${r.id}">Excluir</button></td>
+        <td>
+          <div class="row-actions">
+            <button class="action-btn edit" data-id="${r.id}">Editar</button>
+            <button class="action-btn del" data-id="${r.id}">Excluir</button>
+          </div>
+        </td>
       </tr>
     `).join("");
 
-    tbody.querySelectorAll(".del-btn").forEach(btn => {
+    tbody.querySelectorAll(".action-btn.del").forEach(btn => {
       btn.addEventListener("click", async () => {
         if(!confirm("Excluir esta inscrição? Essa ação não pode ser desfeita.")) return;
         try{
@@ -412,14 +647,10 @@
         }
       });
     });
-  }
 
-  function escapeHtml(str){
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+    tbody.querySelectorAll(".action-btn.edit").forEach(btn => {
+      btn.addEventListener("click", () => openEditModal(btn.dataset.id));
+    });
   }
 
   ["fSearch","fSexo","fIdadeMin","fIdadeMax","fMenor"].forEach(id => {
@@ -436,11 +667,11 @@
     applyFilters();
   });
 
-  document.getElementById("refreshBtn").addEventListener("click", loadData);
+  document.getElementById("refreshBtn").addEventListener("click", () => { loadData(); loadFamilyData(); });
 
   document.getElementById("exportBtn").addEventListener("click", () => {
     if(allRecords.length === 0) return;
-    const headers = ["Nome completo","Idade","Sexo","Bairro","Telefone","Menor de idade","Responsavel","Telefone responsavel","Inscrito em"];
+    const headers = ["Nome completo","Idade","Sexo","Bairro","Telefone","Menor de idade","Responsavel","Telefone responsavel","Dias","Observacoes","Inscrito em"];
     const rows = allRecords.map(r => [
       r.nomeCompleto || "",
       r.idade ?? "",
@@ -450,8 +681,14 @@
       r.menorDeIdade ? "Sim" : "Não",
       r.responsavelNome || "",
       r.responsavelTelefone || "",
+      diasResumo(r),
+      r.observacoes || "",
       formatDate(r.criadoEm)
     ]);
+    downloadCsv(headers, rows, "inscricoes-acampa-leds-27.csv");
+  });
+
+  function downloadCsv(headers, rows, filename){
     const csv = [headers, ...rows]
       .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
       .join("\n");
@@ -459,9 +696,272 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "inscricoes-acampa-leds-27.csv";
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  // ---------- Edit modal (acampamento) ----------
+  const editModalOverlay = document.getElementById("editModalOverlay");
+  const editModalMsg = document.getElementById("editModalMsg");
+  let editingId = null;
+
+  function openEditModal(id){
+    const record = allRecords.find(r => r.id === id);
+    if(!record) return;
+    editingId = id;
+    editModalMsg.textContent = "";
+
+    document.getElementById("editNome").value = record.nomeCompleto || "";
+    document.getElementById("editIdade").value = record.idade || "";
+    document.getElementById("editSexo").value = record.sexo || "Homem";
+    document.getElementById("editBairro").value = record.bairro || "";
+    document.getElementById("editTelefone").value = record.telefone || "";
+    document.getElementById("editObs").value = record.observacoes || "";
+    document.getElementById("editRespNome").value = record.responsavelNome || "";
+    document.getElementById("editRespTelefone").value = record.responsavelTelefone || "";
+
+    const dias = record.diasParticipacao || [];
+    document.querySelectorAll(".editDia").forEach(cb => {
+      cb.checked = dias.includes(cb.value);
+    });
+
+    editModalOverlay.classList.add("show");
+  }
+
+  document.getElementById("editCancelBtn").addEventListener("click", () => {
+    editModalOverlay.classList.remove("show");
+    editingId = null;
+  });
+
+  document.getElementById("editSaveBtn").addEventListener("click", async () => {
+    if(!editingId) return;
+
+    const nome = document.getElementById("editNome").value.trim();
+    const idade = parseInt(document.getElementById("editIdade").value, 10);
+    const sexo = document.getElementById("editSexo").value;
+    const bairro = document.getElementById("editBairro").value.trim();
+    const telefone = document.getElementById("editTelefone").value.trim();
+    const obs = document.getElementById("editObs").value.trim();
+    const respNome = document.getElementById("editRespNome").value.trim();
+    const respTelefone = document.getElementById("editRespTelefone").value.trim();
+
+    const diasEscolhidos = [];
+    document.querySelectorAll(".editDia:checked").forEach(cb => diasEscolhidos.push(cb.value));
+
+    if(!nome || !idade || !sexo || !bairro){
+      editModalMsg.textContent = "Preencha nome, idade, sexo e bairro.";
+      return;
+    }
+
+    const minor = idade < 18;
+
+    try{
+      await updateDoc(doc(db, "inscricoes", editingId), {
+        nomeCompleto: nome,
+        nomeNormalizado: normalizeName(nome),
+        idade: idade,
+        sexo: sexo,
+        bairro: bairro,
+        telefone: telefone || null,
+        menorDeIdade: minor,
+        responsavelNome: minor ? (respNome || null) : null,
+        responsavelTelefone: minor ? (respTelefone || null) : null,
+        diasModo: diasEscolhidos.length >= 5 ? "todos" : "alguns",
+        diasParticipacao: diasEscolhidos,
+        observacoes: obs || null
+      });
+      editModalOverlay.classList.remove("show");
+      editingId = null;
+      await loadData();
+    }catch(err){
+      console.error(err);
+      editModalMsg.textContent = "Não foi possível salvar. Tente novamente.";
+    }
+  });
+
+  function normalizeName(str){
+    return str
+      .trim()
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ");
+  }
+
+  // ================= SÓ DOMINGO (FAMÍLIAS) =================
+  let allFamilies = [];
+
+  async function loadFamilyData(){
+    document.getElementById("famLoadingState").style.display = "block";
+    document.getElementById("famDataTable").style.display = "none";
+    document.getElementById("famEmptyState").style.display = "none";
+
+    try{
+      const q = query(domingoRef, orderBy("criadoEm", "desc"));
+      const snap = await getDocs(q);
+      allFamilies = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFamilyStats(allFamilies);
+      applyFamilyFilters();
+    }catch(err){
+      console.error(err);
+      document.getElementById("famLoadingState").textContent =
+        "Não foi possível carregar os dados. Verifique as regras do Firestore.";
+    }
+  }
+
+  function renderFamilyStats(families){
+    document.getElementById("statFamTotal").textContent = families.length;
+    const totalPessoas = families.reduce((sum, f) => sum + (f.totalPessoas || (f.membros ? f.membros.length : 0)), 0);
+    document.getElementById("statFamPessoas").textContent = totalPessoas;
+  }
+
+  function applyFamilyFilters(){
+    const search = document.getElementById("fFamSearch").value.trim().toLowerCase();
+    const filtered = allFamilies.filter(f => {
+      if(search && !(f.responsavelNome || "").toLowerCase().includes(search)) return false;
+      return true;
+    });
+    renderFamilyTable(filtered);
+  }
+
+  function renderFamilyTable(families){
+    const tbody = document.getElementById("famTableBody");
+    const table = document.getElementById("famDataTable");
+    const empty = document.getElementById("famEmptyState");
+    const loading = document.getElementById("famLoadingState");
+
+    loading.style.display = "none";
+
+    if(families.length === 0){
+      table.style.display = "none";
+      empty.style.display = "block";
+      return;
+    }
+
+    empty.style.display = "none";
+    table.style.display = "table";
+
+    tbody.innerHTML = families.map(f => {
+      const membrosTxt = (f.membros || []).map(m => `${escapeHtml(m.nome)} (${m.idade ?? '—'})`).join("<br>");
+      return `
+      <tr>
+        <td>${escapeHtml(f.responsavelNome || "—")}</td>
+        <td>${escapeHtml(f.responsavelTelefone || "—")}</td>
+        <td>${membrosTxt || "—"}</td>
+        <td>${f.totalPessoas ?? (f.membros ? f.membros.length : 0)}</td>
+        <td>${formatDate(f.criadoEm)}</td>
+        <td>
+          <div class="row-actions">
+            <button class="action-btn edit" data-id="${f.id}">Editar</button>
+            <button class="action-btn del" data-id="${f.id}">Excluir</button>
+          </div>
+        </td>
+      </tr>
+    `;
+    }).join("");
+
+    tbody.querySelectorAll(".action-btn.del").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if(!confirm("Excluir esta família? Essa ação não pode ser desfeita.")) return;
+        try{
+          await deleteDoc(doc(db, "domingoFamilias", btn.dataset.id));
+          await loadFamilyData();
+        }catch(err){
+          console.error(err);
+          alert("Não foi possível excluir. Tente novamente.");
+        }
+      });
+    });
+
+    tbody.querySelectorAll(".action-btn.edit").forEach(btn => {
+      btn.addEventListener("click", () => openFamilyEditModal(btn.dataset.id));
+    });
+  }
+
+  document.getElementById("fFamSearch").addEventListener("input", applyFamilyFilters);
+  document.getElementById("clearFamFilters").addEventListener("click", () => {
+    document.getElementById("fFamSearch").value = "";
+    applyFamilyFilters();
+  });
+
+  // ---------- Edit modal (família) ----------
+  const famEditModalOverlay = document.getElementById("famEditModalOverlay");
+  const famEditModalMsg = document.getElementById("famEditModalMsg");
+  const famEditMembers = document.getElementById("famEditMembers");
+  let famEditingId = null;
+
+  function addFamEditMemberRow(nome, idade){
+    const row = document.createElement("div");
+    row.className = "member-edit-row";
+    row.innerHTML = `
+      <input type="text" class="fam-edit-nome" placeholder="Nome" value="${escapeHtml(nome || "")}">
+      <input type="number" class="fam-edit-idade age" placeholder="Idade" value="${idade ?? ""}">
+      <button type="button" title="Remover">&times;</button>
+    `;
+    row.querySelector("button").addEventListener("click", () => {
+      if(famEditMembers.children.length > 1) row.remove();
+    });
+    famEditMembers.appendChild(row);
+  }
+
+  document.getElementById("famEditAddMember").addEventListener("click", () => addFamEditMemberRow("", ""));
+
+  function openFamilyEditModal(id){
+    const record = allFamilies.find(f => f.id === id);
+    if(!record) return;
+    famEditingId = id;
+    famEditModalMsg.textContent = "";
+
+    document.getElementById("famEditNome").value = record.responsavelNome || "";
+    document.getElementById("famEditTelefone").value = record.responsavelTelefone || "";
+
+    famEditMembers.innerHTML = "";
+    const membros = record.membros && record.membros.length ? record.membros : [{nome:"", idade:""}];
+    membros.forEach(m => addFamEditMemberRow(m.nome, m.idade));
+
+    famEditModalOverlay.classList.add("show");
+  }
+
+  document.getElementById("famEditCancelBtn").addEventListener("click", () => {
+    famEditModalOverlay.classList.remove("show");
+    famEditingId = null;
+  });
+
+  document.getElementById("famEditSaveBtn").addEventListener("click", async () => {
+    if(!famEditingId) return;
+
+    const nome = document.getElementById("famEditNome").value.trim();
+    const telefone = document.getElementById("famEditTelefone").value.trim();
+
+    const membros = [];
+    famEditMembers.querySelectorAll(".member-edit-row").forEach(row => {
+      const mNome = row.querySelector(".fam-edit-nome").value.trim();
+      const mIdade = row.querySelector(".fam-edit-idade").value;
+      if(mNome || mIdade){
+        membros.push({ nome: mNome || "—", idade: mIdade ? parseInt(mIdade, 10) : null });
+      }
+    });
+
+    if(!nome || !telefone || membros.length === 0){
+      famEditModalMsg.textContent = "Preencha responsável, telefone e ao menos uma pessoa.";
+      return;
+    }
+
+    try{
+      await updateDoc(doc(db, "domingoFamilias", famEditingId), {
+        responsavelNome: nome,
+        responsavelNomeNormalizado: normalizeName(nome),
+        responsavelTelefone: telefone,
+        membros: membros,
+        totalPessoas: membros.length
+      });
+      famEditModalOverlay.classList.remove("show");
+      famEditingId = null;
+      await loadFamilyData();
+    }catch(err){
+      console.error(err);
+      famEditModalMsg.textContent = "Não foi possível salvar. Tente novamente.";
+    }
   });
 </script>
 
