@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acampa LEDS 27 — Ficha de Inscrição</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #060806;
+    --panel: #10140f;
+    --panel-2: #171d13;
+    --line: #2a3322;
+    --green: #a3e635;
+    --green-dim: #6f9a26;
+    --green-glow: #d4ff5f;
+    --white: #f4f6f1;
+    --muted: #8d9686;
+    --danger: #ff5a5a;
+    --ok: #7ee787;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height:100vh;
+  }
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(163,230,53,0.14), transparent 60%),
+      var(--black);
+    padding: 40px 16px 80px;
+  }
+
+  .wrap{
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Header / logo ---------- */
+  header{
+    text-align:center;
+    margin-bottom: 28px;
+  }
+
+  .logo{
+    width: 132px;
+    height: 132px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 22px rgba(163,230,53,0.35));
+  }
+
+  .brand-eyebrow{
+    margin-top: 14px;
+    color: var(--green);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+
+  h1.title{
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: clamp(38px, 9vw, 56px);
+    line-height: 0.95;
+    margin: 6px 0 4px;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  h1.title span{
+    color: var(--green);
+  }
+
+  .subtitle{
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0;
+  }
+
+  /* ---------- Card ---------- */
+  .card{
+    position: relative;
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--line);
+    padding: 34px 28px 30px;
+    clip-path: polygon(0 14px, 14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+  }
+
+  fieldset{
+    border: none;
+    padding: 0;
+    margin: 0 0 22px;
+  }
+
+  legend{
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+  }
+
+  .field{
+    margin-bottom: 18px;
+  }
+
+  label{
+    display:block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  label .req{ color: var(--green); }
+  label .opt{ color: var(--muted); font-weight: 400; font-style: italic; }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="tel"]{
+    width: 100%;
+    background: #0b0e08;
+    border: 1px solid var(--line);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  input::placeholder{ color: #4d5449; }
+
+  input:focus{
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(163,230,53,0.18);
+  }
+
+  input.invalid{
+    border-color: var(--danger);
+  }
+
+  .row{
+    display:flex;
+    gap: 14px;
+  }
+
+  .row .field{ flex:1; }
+
+  /* sex toggle */
+  .sex-toggle{
+    display:flex;
+    gap: 10px;
+  }
+
+  .sex-toggle input{ display:none; }
+
+  .sex-toggle label{
+    flex:1;
+    text-align:center;
+    margin:0;
+    padding: 12px 10px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #0b0e08;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 14px;
+    cursor:pointer;
+    transition: all .15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .sex-toggle input:checked + label{
+    border-color: var(--green);
+    color: var(--black);
+    background: var(--green);
+  }
+
+  .hint{
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .error-text{
+    font-size: 12px;
+    color: var(--danger);
+    margin-top: 6px;
+    display:none;
+  }
+
+  .error-text.show{ display:block; }
+
+  /* minor block */
+  .minor-block{
+    display:none;
+    background: rgba(163,230,53,0.06);
+    border: 1px dashed var(--green-dim);
+    border-radius: 6px;
+    padding: 16px 16px 4px;
+    margin-top: 4px;
+  }
+
+  .minor-block.show{ display:block; }
+
+  .minor-block .tag{
+    display:inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  /* submit */
+  .submit-btn{
+    width: 100%;
+    background: var(--green);
+    color: #0a1000;
+    border: none;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 16px;
+    cursor: pointer;
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    transition: filter .15s ease, transform .1s ease;
+  }
+
+  .submit-btn:hover{ filter: brightness(1.1); }
+  .submit-btn:active{ transform: scale(0.99); }
+
+  .submit-btn:disabled{
+    background: #4a5a2e;
+    color: #8b967f;
+    cursor: not-allowed;
+  }
+
+  .form-msg{
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 5px;
+    font-size: 14px;
+    display:none;
+  }
+
+  .form-msg.show{ display:block; }
+
+  .form-msg.error{
+    background: rgba(255,90,90,0.1);
+    border: 1px solid var(--danger);
+    color: #ffb3b3;
+  }
+
+  .form-msg.success{
+    background: rgba(126,231,135,0.1);
+    border: 1px solid var(--ok);
+    color: var(--ok);
+  }
+
+  /* success state */
+  .success-screen{
+    display:none;
+    text-align:center;
+    padding: 20px 10px 10px;
+  }
+
+  .success-screen.show{ display:block; }
+
+  .success-screen .check{
+    width: 64px; height:64px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: rgba(163,230,53,0.12);
+    border: 2px solid var(--green);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .success-screen h2{
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+    color: var(--white);
+  }
+
+  .success-screen p{
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 22px;
+  }
+
+  .success-screen .again-btn{
+    background: transparent;
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    padding: 11px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    cursor:pointer;
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 26px;
+    font-size: 12px;
+    color: #4d5449;
+  }
+
+  footer a{ color: var(--green-dim); text-decoration: none; }
+
+  @media (max-width: 460px){
+    .row{ flex-direction: column; gap: 0; }
+    .card{ padding: 26px 18px 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img src="assets/logo.png" alt="Acampa LEDS 27" class="logo">
+    <div class="brand-eyebrow">Igreja LEDS</div>
+    <h1 class="title">Acampa <span>LEDS 27</span></h1>
+    <p class="subtitle">Preencha a ficha abaixo para garantir sua vaga</p>
+  </header>
+
+  <div class="card">
+
+    <form id="regForm" novalidate>
+
+      <fieldset>
+        <legend>Seus dados</legend>
+
+        <div class="field">
+          <label for="nome">Nome completo <span class="req">*</span></label>
+          <input type="text" id="nome" name="nome" placeholder="Ex: Maria da Silva Souza" autocomplete="name" required>
+          <div class="error-text" id="err-nome"></div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="idade">Idade <span class="req">*</span></label>
+            <input type="number" id="idade" name="idade" placeholder="Ex: 16" min="1" max="120" required>
+            <div class="error-text" id="err-idade"></div>
+          </div>
+          <div class="field">
+            <label>Sexo <span class="req">*</span></label>
+            <div class="sex-toggle">
+              <input type="radio" id="sexoM" name="sexo" value="Homem">
+              <label for="sexoM">Homem</label>
+              <input type="radio" id="sexoF" name="sexo" value="Mulher">
+              <label for="sexoF">Mulher</label>
+            </div>
+            <div class="error-text" id="err-sexo"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="bairro">Bairro <span class="req">*</span></label>
+          <input type="text" id="bairro" name="bairro" placeholder="Ex: Centro" required>
+          <div class="error-text" id="err-bairro"></div>
+        </div>
+
+        <div class="field">
+          <label for="telefone">Telefone para contato <span class="opt">(opcional)</span></label>
+          <input type="tel" id="telefone" name="telefone" placeholder="Ex: (31) 99999-9999">
+        </div>
+      </fieldset>
+
+      <fieldset id="minorFieldset" style="display:none;">
+        <legend>Contato de emergência</legend>
+        <div class="minor-block" id="minorBlock">
+          <span class="tag">Obrigatório para menores de 18 anos</span>
+
+          <div class="field">
+            <label for="respNome">Nome do responsável <span class="req">*</span></label>
+            <input type="text" id="respNome" name="respNome" placeholder="Nome completo do responsável">
+            <div class="error-text" id="err-respNome"></div>
+          </div>
+
+          <div class="field">
+            <label for="respTelefone">Telefone do responsável <span class="req">*</span></label>
+            <input type="tel" id="respTelefone" name="respTelefone" placeholder="Ex: (31) 99999-9999">
+            <div class="error-text" id="err-respTelefone"></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Confirmar inscrição</button>
+
+      <div class="form-msg" id="formMsg"></div>
+    </form>
+
+    <div class="success-screen" id="successScreen">
+      <div class="check">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 12.5L9.5 18L20 6" stroke="#a3e635" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Inscrição confirmada</h2>
+      <p id="successName">Sua vaga no acampamento está garantida.</p>
+      <button class="again-btn" id="againBtn">Inscrever outra pessoa</button>
+    </div>
+
+  </div>
+
+  <footer>
+    Acampa LEDS 27 &middot; <a href="admin.html">Área administrativa</a>
+  </footer>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCZJ5s7i10PHnOhYBTUHqNrUQuDfWFi8_E",
+    authDomain: "leds-inscricoes.firebaseapp.com",
+    projectId: "leds-inscricoes",
+    storageBucket: "leds-inscricoes.firebasestorage.app",
+    messagingSenderId: "542278117029",
+    appId: "1:542278117029:web:c7501eb26e388882d8cf4c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const inscricoesRef = collection(db, "inscricoes");
+
+  function normalizeName(str){
+    return str
+      .trim()
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .replace(/\s+/g, " ");
+  }
+
+  const form = document.getElementById("regForm");
+  const idadeInput = document.getElementById("idade");
+  const minorFieldset = document.getElementById("minorFieldset");
+  const minorBlock = document.getElementById("minorBlock");
+  const respNomeInput = document.getElementById("respNome");
+  const respTelefoneInput = document.getElementById("respTelefone");
+  const submitBtn = document.getElementById("submitBtn");
+  const formMsg = document.getElementById("formMsg");
+  const successScreen = document.getElementById("successScreen");
+  const successName = document.getElementById("successName");
+
+  function isMinor(){
+    const v = parseInt(idadeInput.value, 10);
+    return !isNaN(v) && v < 18 && v > 0;
+  }
+
+  function toggleMinorBlock(){
+    const minor = isMinor();
+    minorFieldset.style.display = minor ? "block" : "none";
+    minorBlock.classList.toggle("show", minor);
+    respNomeInput.required = minor;
+    respTelefoneInput.required = minor;
+  }
+
+  idadeInput.addEventListener("input", toggleMinorBlock);
+
+  function clearErrors(){
+    document.querySelectorAll(".error-text").forEach(el => { el.textContent = ""; el.classList.remove("show"); });
+    document.querySelectorAll("input").forEach(el => el.classList.remove("invalid"));
+    formMsg.classList.remove("show", "error", "success");
+    formMsg.textContent = "";
+  }
+
+  function setFieldError(id, message){
+    const el = document.getElementById("err-" + id);
+    const input = document.getElementById(id);
+    if(el){ el.textContent = message; el.classList.add("show"); }
+    if(input){ input.classList.add("invalid"); }
+  }
+
+  function setFormMsg(message, type){
+    formMsg.textContent = message;
+    formMsg.classList.add("show", type);
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const nome = document.getElementById("nome").value.trim();
+    const idade = idadeInput.value;
+    const sexoEl = document.querySelector('input[name="sexo"]:checked');
+    const sexo = sexoEl ? sexoEl.value : "";
+    const bairro = document.getElementById("bairro").value.trim();
+    const telefone = document.getElementById("telefone").value.trim();
+    const respNome = respNomeInput.value.trim();
+    const respTelefone = respTelefoneInput.value.trim();
+    const minor = isMinor();
+
+    let hasError = false;
+
+    if(!nome || nome.split(" ").filter(Boolean).length < 2){
+      setFieldError("nome", "Informe o nome completo (nome e sobrenome).");
+      hasError = true;
+    }
+    if(!idade || parseInt(idade, 10) <= 0){
+      setFieldError("idade", "Informe uma idade válida.");
+      hasError = true;
+    }
+    if(!sexo){
+      setFieldError("sexo", "Selecione uma opção.");
+      hasError = true;
+    }
+    if(!bairro){
+      setFieldError("bairro", "Informe o bairro.");
+      hasError = true;
+    }
+    if(minor && !respNome){
+      setFieldError("respNome", "Obrigatório para menores de 18 anos.");
+      hasError = true;
+    }
+    if(minor && !respTelefone){
+      setFieldError("respTelefone", "Obrigatório para menores de 18 anos.");
+      hasError = true;
+    }
+
+    if(hasError) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Verificando...";
+
+    try{
+      const nomeNormalizado = normalizeName(nome);
+
+      const dupQuery = query(inscricoesRef, where("nomeNormalizado", "==", nomeNormalizado));
+      const dupSnap = await getDocs(dupQuery);
+
+      if(!dupSnap.empty){
+        setFormMsg("Já existe uma inscrição com este nome. Se você acha que isso é um engano, procure a organização do acampamento.", "error");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Confirmar inscrição";
+        return;
+      }
+
+      submitBtn.textContent = "Enviando...";
+
+      await addDoc(inscricoesRef, {
+        nomeCompleto: nome,
+        nomeNormalizado: nomeNormalizado,
+        idade: parseInt(idade, 10),
+        sexo: sexo,
+        bairro: bairro,
+        telefone: telefone || null,
+        menorDeIdade: minor,
+        responsavelNome: minor ? respNome : null,
+        responsavelTelefone: minor ? respTelefone : null,
+        criadoEm: serverTimestamp()
+      });
+
+      successName.textContent = `${nome.split(" ")[0]}, sua vaga no Acampa LEDS 27 está garantida!`;
+      form.style.display = "none";
+      successScreen.classList.add("show");
+
+    }catch(err){
+      console.error(err);
+      setFormMsg("Não foi possível enviar sua inscrição agora. Verifique sua conexão e tente novamente.", "error");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Confirmar inscrição";
+    }
+  });
+
+  document.getElementById("againBtn").addEventListener("click", () => {
+    form.reset();
+    toggleMinorBlock();
+    clearErrors();
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Confirmar inscrição";
+    successScreen.classList.remove("show");
+    form.style.display = "block";
+  });
+</script>
+
+</body>
+</html>
