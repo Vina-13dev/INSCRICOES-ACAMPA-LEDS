@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acampa LEDS 27 — Painel Administrativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #060806;
+    --panel: #10140f;
+    --panel-2: #171d13;
+    --line: #2a3322;
+    --green: #a3e635;
+    --green-dim: #6f9a26;
+    --white: #f4f6f1;
+    --muted: #8d9686;
+    --danger: #ff5a5a;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height:100vh;
+  }
+  body{
+    background: radial-gradient(ellipse 900px 500px at 50% -10%, rgba(163,230,53,0.10), transparent 60%), var(--black);
+  }
+
+  /* ---------- lock screen ---------- */
+  #lockScreen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 20px;
+  }
+  .lock-card{
+    width:100%;
+    max-width: 360px;
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--line);
+    padding: 32px 26px;
+    text-align:center;
+    clip-path: polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .lock-card img{ width: 76px; margin-bottom: 14px; filter: drop-shadow(0 0 16px rgba(163,230,53,0.3)); }
+  .lock-card h1{
+    font-family:'Anton', sans-serif; font-weight:400;
+    text-transform:uppercase; font-size:22px; margin: 0 0 4px;
+  }
+  .lock-card p{ color:var(--muted); font-size:13px; margin:0 0 20px; }
+  .lock-card input{
+    width:100%;
+    background:#0b0e08;
+    border:1px solid var(--line);
+    color:var(--white);
+    padding: 12px 14px;
+    border-radius:4px;
+    font-size:15px;
+    margin-bottom: 12px;
+  }
+  .lock-card input:focus{ outline:none; border-color:var(--green); }
+  .lock-card button{
+    width:100%;
+    background:var(--green);
+    color:#0a1000;
+    border:none;
+    font-family:'Anton', sans-serif; font-weight:400;
+    text-transform:uppercase; font-size:15px;
+    padding: 12px;
+    cursor:pointer;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .lock-error{ color: var(--danger); font-size:12px; min-height:16px; margin-top:10px; }
+  .lock-note{ color:#4d5449; font-size:11px; margin-top:16px; line-height:1.5; }
+
+  /* ---------- dashboard ---------- */
+  #dashboard{ display:none; max-width: 1120px; margin: 0 auto; padding: 30px 18px 70px; }
+  #dashboard.show{ display:block; }
+
+  .top{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 22px; flex-wrap:wrap; gap:12px;
+  }
+  .top .brand{ display:flex; align-items:center; gap:12px; }
+  .top img{ width:46px; height:46px; object-fit:contain; }
+  .top h1{
+    font-family:'Anton', sans-serif; font-weight:400; text-transform:uppercase;
+    font-size:22px; margin:0;
+  }
+  .top .sub{ color:var(--muted); font-size:12px; }
+  .top-actions{ display:flex; gap:10px; }
+  .btn-outline{
+    background:transparent; border:1px solid var(--line); color:var(--muted);
+    padding: 9px 14px; font-size:12px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.04em; border-radius:4px; cursor:pointer;
+  }
+  .btn-outline:hover{ border-color:var(--green); color:var(--green); }
+  .btn-solid{
+    background:var(--green); color:#0a1000; border:none;
+    padding:9px 14px; font-size:12px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.04em; border-radius:4px; cursor:pointer;
+  }
+
+  /* config panel */
+  .config-panel{
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap: 18px;
+    align-items:flex-end;
+  }
+  .switch-label{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:700; color:var(--white); cursor:pointer;
+  }
+  .switch-label input{ display:none; }
+  .switch-track{
+    width:42px; height:24px; border-radius:20px; background:#2a3322;
+    position:relative; transition: background .15s ease; flex-shrink:0;
+  }
+  .switch-thumb{
+    position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%;
+    background: var(--muted); transition: all .15s ease;
+  }
+  .switch-label input:checked + .switch-track{ background: rgba(163,230,53,0.35); }
+  .switch-label input:checked + .switch-track .switch-thumb{ left:21px; background: var(--green); }
+  .config-panel .values{ display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; }
+  .config-panel .field{ display:flex; flex-direction:column; gap:6px; }
+  .config-panel label{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+  .config-panel input{
+    background:#0b0e08; border:1px solid var(--line); color:var(--white);
+    padding: 9px 10px; border-radius:4px; font-size:14px; width: 150px;
+  }
+  .config-msg{ font-size:12px; color: var(--green); width:100%; }
+
+  /* payment pills */
+  .pill.pago{ background: rgba(126,231,135,0.14); color:#7ee787; }
+  .pill.parcial{ background: rgba(255,200,80,0.14); color:#ffd27a; }
+  .pill.pendente{ background: rgba(255,90,90,0.14); color:#ff9b9b; }
+  .pay-cell{ white-space:nowrap; }
+  .pay-cell .amounts{ font-size:11px; color:var(--muted); margin-top:4px; }
+
+  /* finance summary */
+  .finance-summary{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+
+  /* payment modal extras */
+  .pay-sum-row{ display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--line); }
+  .pay-sum-row:last-child{ border-bottom:none; }
+  .pay-hist-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12px; color: var(--white); padding: 8px 0; border-bottom: 1px solid rgba(42,51,34,0.6);
+  }
+  .pay-hist-row:last-child{ border-bottom:none; }
+
+  /* print report (hidden on screen) */
+  .print-only{ display:none; }
+
+  @media print{
+    body *{ visibility:hidden; }
+    #printReport, #printReport *{ visibility:visible; }
+    #printReport{
+      display:block !important;
+      position:absolute; top:0; left:0; width:100%;
+      background:#fff; color:#000; padding:24px;
+    }
+  }
+
+  /* section tabs */
+  .section-tabs{ display:flex; gap: 8px; margin-bottom: 20px; }
+  .section-tabs button{
+    background: var(--panel); border: 1px solid var(--line); color: var(--muted);
+    font-weight: 700; font-size: 13px; padding: 11px 18px; border-radius: 6px; cursor: pointer;
+  }
+  .section-tabs button.active{ border-color: var(--green); color: var(--green); background: rgba(163,230,53,0.08); }
+
+  .section-panel{ display:none; }
+  .section-panel.active{ display:block; }
+
+  /* stat cards */
+  .stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .stat{
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    padding: 16px 14px;
+    border-radius: 6px;
+  }
+  .stat .num{ font-family:'Anton', sans-serif; font-weight:400; font-size:30px; color:var(--green); line-height:1; }
+  .stat .label{ color:var(--muted); font-size:12px; margin-top:6px; text-transform:uppercase; letter-spacing:0.03em; }
+
+  /* filters */
+  .filters{
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap: 12px;
+    align-items:flex-end;
+  }
+  .filters .field{ display:flex; flex-direction:column; gap:6px; }
+  .filters label{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+  .filters input, .filters select{
+    background:#0b0e08; border:1px solid var(--line); color:var(--white);
+    padding: 9px 10px; border-radius:4px; font-size:14px; min-width: 120px;
+  }
+  .filters input:focus, .filters select:focus{ outline:none; border-color:var(--green); }
+  .filters .search{ flex:1; min-width: 180px; }
+  .filters .search input{ width:100%; }
+  .filters .clear{ margin-left:auto; }
+
+  /* table */
+  .table-wrap{
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow-x:auto;
+  }
+  table{ width:100%; border-collapse: collapse; font-size:13px; min-width: 900px; }
+  thead th{
+    text-align:left; padding: 12px 14px; color:var(--muted);
+    text-transform:uppercase; font-size:11px; letter-spacing:0.04em;
+    border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  tbody td{ padding: 12px 14px; border-bottom:1px solid rgba(42,51,34,0.5); vertical-align:top; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:hover{ background: rgba(163,230,53,0.04); }
+  .pill{
+    display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700;
+    text-transform:uppercase;
+  }
+  .pill.homem{ background: rgba(90,160,255,0.14); color:#8fbfff; }
+  .pill.mulher{ background: rgba(255,120,190,0.14); color:#ff9fce; }
+  .pill.minor{ background: rgba(255,200,80,0.14); color:#ffd27a; margin-left:6px; }
+  .resp-line{ font-size:11px; color:var(--muted); margin-top:3px; }
+  .obs-line{ font-size:12px; color:var(--white); max-width: 220px; white-space: normal; }
+  .row-actions{ display:flex; gap:6px; white-space:nowrap; }
+  .action-btn{
+    background:transparent; border:1px solid var(--line); color: var(--muted);
+    font-size:11px; padding: 5px 9px; border-radius:4px; cursor:pointer;
+  }
+  .action-btn.edit:hover{ border-color: var(--green); color: var(--green); }
+  .action-btn.del:hover{ border-color: var(--danger); color: var(--danger); }
+
+  .empty-state{ text-align:center; padding: 50px 20px; color:var(--muted); }
+  .loading{ text-align:center; padding: 50px 20px; color:var(--muted); }
+
+  /* ---------- edit modal ---------- */
+  .modal-overlay{
+    display:none;
+    position: fixed; inset:0;
+    background: rgba(0,0,0,0.65);
+    align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    width:100%; max-width: 520px;
+    max-height: 88vh;
+    overflow-y:auto;
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    border-radius: 8px;
+    padding: 24px;
+  }
+  .modal h2{
+    font-family:'Anton', sans-serif; font-weight:400; text-transform:uppercase;
+    font-size:20px; margin: 0 0 18px;
+  }
+  .modal .field{ margin-bottom: 14px; display:flex; flex-direction:column; gap:6px; }
+  .modal label{ font-size:12px; color:var(--muted); font-weight:600; }
+  .modal input, .modal select, .modal textarea{
+    background:#0b0e08; border:1px solid var(--line); color:var(--white);
+    padding: 10px 12px; border-radius:4px; font-size:14px; font-family:inherit;
+  }
+  .modal textarea{ min-height: 70px; resize: vertical; }
+  .modal .row2{ display:flex; gap:12px; }
+  .modal .row2 .field{ flex:1; }
+  .modal .days-check{ display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+  .modal .days-check label{
+    background:#0b0e08; border:1px solid var(--line); padding:6px 10px; border-radius:4px;
+    font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;
+  }
+  .modal .member-edit-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .modal .member-edit-row input{ flex:1; }
+  .modal .member-edit-row input.age{ max-width: 80px; flex: 0 0 80px; }
+  .modal .member-edit-row button{
+    background:transparent; border:1px solid var(--line); color:var(--danger);
+    border-radius:4px; width:38px; cursor:pointer;
+  }
+  .modal-actions{ display:flex; gap:10px; margin-top: 18px; }
+  .modal-actions button{ flex:1; padding: 12px; border-radius:4px; font-weight:700; font-size:13px; cursor:pointer; border:none; text-transform:uppercase; }
+  .modal-actions .save-btn{ background: var(--green); color:#0a1000; }
+  .modal-actions .cancel-btn{ background: transparent; border:1px solid var(--line); color:var(--muted); }
+  .modal-msg{ font-size:12px; color:var(--danger); margin-top:8px; min-height:14px; }
+
+  @media (max-width: 700px){
+    .stats{ grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOCK SCREEN ===== -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <img src="logo.png" alt="Acampa LEDS 27">
+    <h1>Área administrativa</h1>
+    <p>Digite a senha para ver as inscrições</p>
+    <input type="password" id="lockPassword" placeholder="Senha">
+    <button id="lockBtn">Entrar</button>
+    <div class="lock-error" id="lockError"></div>
+    <div class="lock-note">Esta senha é apenas uma trava de tela — quem tiver acesso ao código-fonte consegue vê-la. Para proteção real dos dados, ajuste as regras do Firestore.</div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard">
+  <div class="top">
+    <div class="brand">
+      <img src="logo.png" alt="logo">
+      <div>
+        <h1>Inscrições — Acampa LEDS 27</h1>
+        <div class="sub" id="lastUpdate">Carregando...</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn-outline" id="refreshBtn">Atualizar</button>
+      <button class="btn-outline" id="exportBtn">Exportar CSV</button>
+      <button class="btn-solid" id="reportBtn">Relatório financeiro (PDF)</button>
+    </div>
+  </div>
+
+  <div class="config-panel" id="configPanel">
+    <label class="switch-label" for="cfgDomingoAberto">
+      <input type="checkbox" id="cfgDomingoAberto">
+      <span class="switch-track"><span class="switch-thumb"></span></span>
+      Inscrições de domingo abertas
+    </label>
+    <div class="values">
+      <div class="field">
+        <label>Valor acampamento completo (R$)</label>
+        <input type="number" id="cfgValorAcampamento" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>Valor domingo por pessoa (R$)</label>
+        <input type="number" id="cfgValorDomingo" min="0" step="0.01">
+      </div>
+      <button class="btn-solid" id="cfgSaveBtn">Salvar configurações</button>
+    </div>
+    <div class="config-msg" id="cfgMsg"></div>
+  </div>
+
+  <div class="finance-summary" id="financeSummary">
+    <div class="stat"><div class="num" id="finArrecadado">R$ 0</div><div class="label">Total arrecadado</div></div>
+    <div class="stat"><div class="num" id="finEsperado">R$ 0</div><div class="label">Total esperado</div></div>
+    <div class="stat"><div class="num" id="finPendente">R$ 0</div><div class="label">Total pendente</div></div>
+  </div>
+
+  <div class="section-tabs">
+    <button type="button" id="sectionCampBtn" class="active">Acampamento completo</button>
+    <button type="button" id="sectionFamilyBtn">Só domingo (famílias)</button>
+  </div>
+
+  <!-- ============ SEÇÃO: ACAMPAMENTO COMPLETO ============ -->
+  <div class="section-panel active" id="sectionCamp">
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="statTotal">0</div><div class="label">Total inscritos</div></div>
+      <div class="stat"><div class="num" id="statHomens">0</div><div class="label">Homens</div></div>
+      <div class="stat"><div class="num" id="statMulheres">0</div><div class="label">Mulheres</div></div>
+      <div class="stat"><div class="num" id="statMenores">0</div><div class="label">Menores de 18</div></div>
+    </div>
+
+    <div class="filters">
+      <div class="field search">
+        <label>Buscar por nome</label>
+        <input type="text" id="fSearch" placeholder="Digite um nome...">
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="fSexo">
+          <option value="">Todos</option>
+          <option value="Homem">Homem</option>
+          <option value="Mulher">Mulher</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Idade mín.</label>
+        <input type="number" id="fIdadeMin" placeholder="0" min="0">
+      </div>
+      <div class="field">
+        <label>Idade máx.</label>
+        <input type="number" id="fIdadeMax" placeholder="120" min="0">
+      </div>
+      <div class="field">
+        <label>Faixa</label>
+        <select id="fMenor">
+          <option value="">Todos</option>
+          <option value="menor">Menores de 18</option>
+          <option value="maior">18 ou mais</option>
+        </select>
+      </div>
+      <button class="btn-outline clear" id="clearFilters">Limpar filtros</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="loading" id="loadingState">Carregando inscrições...</div>
+      <table id="dataTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Nome completo</th>
+            <th>Idade</th>
+            <th>Sexo</th>
+            <th>Bairro</th>
+            <th>Telefone</th>
+            <th>Dias</th>
+            <th>Observações</th>
+            <th>Inscrito em</th>
+            <th>Pagamento</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">Nenhuma inscrição encontrada com esses filtros.</div>
+    </div>
+  </div>
+
+  <!-- ============ SEÇÃO: SÓ DOMINGO (FAMÍLIAS) ============ -->
+  <div class="section-panel" id="sectionFamily">
+
+    <div class="stats">
+      <div class="stat"><div class="num" id="statFamTotal">0</div><div class="label">Famílias cadastradas</div></div>
+      <div class="stat"><div class="num" id="statFamPessoas">0</div><div class="label">Total de pessoas</div></div>
+    </div>
+
+    <div class="filters">
+      <div class="field search">
+        <label>Buscar por responsável</label>
+        <input type="text" id="fFamSearch" placeholder="Digite um nome...">
+      </div>
+      <button class="btn-outline clear" id="clearFamFilters">Limpar filtros</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="loading" id="famLoadingState">Carregando famílias...</div>
+      <table id="famDataTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Responsável</th>
+            <th>Telefone</th>
+            <th>Quem vai (nome / idade)</th>
+            <th>Total</th>
+            <th>Cadastrado em</th>
+            <th>Pagamento</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="famTableBody"></tbody>
+      </table>
+      <div class="empty-state" id="famEmptyState" style="display:none;">Nenhuma família cadastrada ainda.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== MODAL: EDITAR INSCRIÇÃO (acampamento) ===== -->
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal">
+    <h2>Editar inscrição</h2>
+    <div class="field">
+      <label>Nome completo</label>
+      <input type="text" id="editNome">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Idade</label>
+        <input type="number" id="editIdade" min="1" max="120">
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="editSexo">
+          <option value="Homem">Homem</option>
+          <option value="Mulher">Mulher</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Bairro</label>
+        <input type="text" id="editBairro">
+      </div>
+      <div class="field">
+        <label>Telefone</label>
+        <input type="text" id="editTelefone">
+      </div>
+    </div>
+    <div class="field">
+      <label>Dias de participação</label>
+      <div class="days-check">
+        <label><input type="checkbox" value="Sexta" class="editDia"> Sexta</label>
+        <label><input type="checkbox" value="Sábado" class="editDia"> Sábado</label>
+        <label><input type="checkbox" value="Domingo" class="editDia"> Domingo</label>
+        <label><input type="checkbox" value="Segunda" class="editDia"> Segunda</label>
+        <label><input type="checkbox" value="Terça" class="editDia"> Terça</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Observações</label>
+      <textarea id="editObs"></textarea>
+    </div>
+    <div class="field" id="editMinorWrap">
+      <label>Nome do responsável (menores de 18)</label>
+      <input type="text" id="editRespNome">
+      <label style="margin-top:8px;">Telefone do responsável</label>
+      <input type="text" id="editRespTelefone">
+    </div>
+    <div class="modal-msg" id="editModalMsg"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" id="editCancelBtn">Cancelar</button>
+      <button class="save-btn" id="editSaveBtn">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: EDITAR FAMÍLIA (domingo) ===== -->
+<div class="modal-overlay" id="famEditModalOverlay">
+  <div class="modal">
+    <h2>Editar família</h2>
+    <div class="field">
+      <label>Nome do responsável</label>
+      <input type="text" id="famEditNome">
+    </div>
+    <div class="field">
+      <label>Telefone</label>
+      <input type="text" id="famEditTelefone">
+    </div>
+    <div class="field">
+      <label>Quem vai (nome e idade)</label>
+      <div id="famEditMembers"></div>
+      <button type="button" class="btn-outline" id="famEditAddMember" style="margin-top:6px;">+ Adicionar pessoa</button>
+    </div>
+    <div class="modal-msg" id="famEditModalMsg"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" id="famEditCancelBtn">Cancelar</button>
+      <button class="save-btn" id="famEditSaveBtn">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: PAGAMENTOS ===== -->
+<div class="modal-overlay" id="paymentModalOverlay">
+  <div class="modal">
+    <h2>Pagamentos — <span id="paymentModalName"></span></h2>
+    <div id="paymentSummary"></div>
+    <div id="paymentHistory" style="margin: 14px 0;"></div>
+    <div class="row2">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="payValor" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="payData">
+      </div>
+    </div>
+    <div class="field">
+      <label>Observação (opcional)</label>
+      <input type="text" id="payObs" placeholder="Ex: Pix, dinheiro, 1ª parcela...">
+    </div>
+    <button class="btn-solid" id="payAddBtn" style="width:100%; margin-top:6px;">+ Adicionar pagamento</button>
+    <div class="modal-msg" id="paymentModalMsg"></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" id="paymentCloseBtn">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RELATÓRIO PARA IMPRESSÃO / PDF ===== -->
+<div id="printReport" class="print-only"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, orderBy, query, getDoc, setDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCZJ5s7i10PHnOhYBTUHqNrUQuDfWFi8_E",
+    authDomain: "leds-inscricoes.firebaseapp.com",
+    projectId: "leds-inscricoes",
+    storageBucket: "leds-inscricoes.firebasestorage.app",
+    messagingSenderId: "542278117029",
+    appId: "1:542278117029:web:c7501eb26e388882d8cf4c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const inscricoesRef = collection(db, "inscricoes");
+  const domingoRef = collection(db, "domingoFamilias");
+  const configRef = doc(db, "config", "settings");
+
+  let appConfig = { domingoAberto: false, valorAcampamento: 0, valorDomingo: 0 };
+
+  async function loadConfig(){
+    try{
+      const snap = await getDoc(configRef);
+      if(snap.exists()){
+        appConfig = { ...appConfig, ...snap.data() };
+      }
+    }catch(err){
+      console.error(err);
+    }
+    document.getElementById("cfgDomingoAberto").checked = !!appConfig.domingoAberto;
+    document.getElementById("cfgValorAcampamento").value = appConfig.valorAcampamento || 0;
+    document.getElementById("cfgValorDomingo").value = appConfig.valorDomingo || 0;
+  }
+
+  document.getElementById("cfgSaveBtn").addEventListener("click", async () => {
+    const domingoAberto = document.getElementById("cfgDomingoAberto").checked;
+    const valorAcampamento = parseFloat(document.getElementById("cfgValorAcampamento").value) || 0;
+    const valorDomingo = parseFloat(document.getElementById("cfgValorDomingo").value) || 0;
+    const cfgMsg = document.getElementById("cfgMsg");
+    try{
+      await setDoc(configRef, { domingoAberto, valorAcampamento, valorDomingo }, { merge: true });
+      appConfig = { domingoAberto, valorAcampamento, valorDomingo };
+      cfgMsg.style.color = "var(--green)";
+      cfgMsg.textContent = "Configurações salvas!";
+      renderStats(allRecords);
+      renderFamilyStats(allFamilies);
+      renderFinanceSummary();
+      applyFilters();
+      applyFamilyFilters();
+      setTimeout(() => { cfgMsg.textContent = ""; }, 3000);
+    }catch(err){
+      console.error(err);
+      cfgMsg.style.color = "var(--danger)";
+      cfgMsg.textContent = "Erro ao salvar. Verifique as regras do Firestore para a coleção 'config'.";
+    }
+  });
+
+  // ---------- Lock screen (UI gate only — see security note) ----------
+  const ADMIN_PASSWORD = "leds27"; // TROQUE ESTA SENHA
+
+  const lockScreen = document.getElementById("lockScreen");
+  const dashboard = document.getElementById("dashboard");
+  const lockPassword = document.getElementById("lockPassword");
+  const lockBtn = document.getElementById("lockBtn");
+  const lockError = document.getElementById("lockError");
+
+  async function tryUnlock(){
+    if(lockPassword.value === ADMIN_PASSWORD){
+      lockScreen.style.display = "none";
+      dashboard.classList.add("show");
+      await loadConfig();
+      await Promise.all([loadData(), loadFamilyData()]);
+      renderFinanceSummary();
+    }else{
+      lockError.textContent = "Senha incorreta.";
+    }
+  }
+  lockBtn.addEventListener("click", tryUnlock);
+  lockPassword.addEventListener("keydown", (e) => { if(e.key === "Enter") tryUnlock(); });
+
+  // ---------- Section tabs ----------
+  const sectionCampBtn = document.getElementById("sectionCampBtn");
+  const sectionFamilyBtn = document.getElementById("sectionFamilyBtn");
+  const sectionCamp = document.getElementById("sectionCamp");
+  const sectionFamily = document.getElementById("sectionFamily");
+
+  sectionCampBtn.addEventListener("click", () => {
+    sectionCampBtn.classList.add("active");
+    sectionFamilyBtn.classList.remove("active");
+    sectionCamp.classList.add("active");
+    sectionFamily.classList.remove("active");
+  });
+  sectionFamilyBtn.addEventListener("click", () => {
+    sectionFamilyBtn.classList.add("active");
+    sectionCampBtn.classList.remove("active");
+    sectionFamily.classList.add("active");
+    sectionCamp.classList.remove("active");
+  });
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function formatDate(ts){
+    if(!ts || !ts.toDate) return "—";
+    const d = ts.toDate();
+    return d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR", {hour:'2-digit', minute:'2-digit'});
+  }
+
+  function formatBRL(v){
+    return (v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  function formatSimpleDate(str){
+    if(!str) return "—";
+    const parts = str.split("-");
+    if(parts.length !== 3) return str;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
+  // valorUnit = preço por pessoa; multiplier = quantas pessoas esse registro cobre
+  function calcPagamento(record, valorUnit, multiplier){
+    const pagamentos = record.pagamentos || [];
+    const totalPago = pagamentos.reduce((sum, p) => sum + (parseFloat(p.valor) || 0), 0);
+    const valorDevido = (valorUnit || 0) * (multiplier || 1);
+    const saldo = valorDevido - totalPago;
+    let status = "Pendente";
+    if(valorDevido > 0 && saldo <= 0) status = "Pago";
+    else if(totalPago > 0) status = "Parcial";
+    return { totalPago, valorDevido, saldo: saldo > 0 ? saldo : 0, status };
+  }
+
+  function pillClassForStatus(status){
+    if(status === "Pago") return "pago";
+    if(status === "Parcial") return "parcial";
+    return "pendente";
+  }
+
+  function renderFinanceSummary(){
+    let arrecadado = 0, esperado = 0;
+    allRecords.forEach(r => {
+      const { totalPago, valorDevido } = calcPagamento(r, appConfig.valorAcampamento, 1);
+      arrecadado += totalPago;
+      esperado += valorDevido;
+    });
+    allFamilies.forEach(f => {
+      const mult = f.totalPessoas || (f.membros ? f.membros.length : 1);
+      const { totalPago, valorDevido } = calcPagamento(f, appConfig.valorDomingo, mult);
+      arrecadado += totalPago;
+      esperado += valorDevido;
+    });
+    const pendente = esperado - arrecadado;
+    document.getElementById("finArrecadado").textContent = formatBRL(arrecadado);
+    document.getElementById("finEsperado").textContent = formatBRL(esperado);
+    document.getElementById("finPendente").textContent = formatBRL(pendente > 0 ? pendente : 0);
+  }
+
+  // ---------- Payment modal (shared by both collections) ----------
+  const paymentModalOverlay = document.getElementById("paymentModalOverlay");
+  const paymentModalMsg = document.getElementById("paymentModalMsg");
+  let paymentContext = null; // { collectionName, id }
+
+  function getPaymentUnitAndMultiplier(collectionName, record){
+    if(collectionName === "inscricoes"){
+      return { unit: appConfig.valorAcampamento, multiplier: 1 };
+    }
+    const mult = record.totalPessoas || (record.membros ? record.membros.length : 1);
+    return { unit: appConfig.valorDomingo, multiplier: mult };
+  }
+
+  function openPaymentModal(collectionName, id){
+    const list = collectionName === "inscricoes" ? allRecords : allFamilies;
+    const record = list.find(r => r.id === id);
+    if(!record) return;
+    paymentContext = { collectionName, id };
+    document.getElementById("paymentModalName").textContent =
+      record.nomeCompleto || record.responsavelNome || "—";
+    paymentModalMsg.textContent = "";
+    renderPaymentModal(record);
+    paymentModalOverlay.classList.add("show");
+  }
+
+  function renderPaymentModal(record){
+    const { unit, multiplier } = getPaymentUnitAndMultiplier(paymentContext.collectionName, record);
+    const { totalPago, valorDevido, saldo, status } = calcPagamento(record, unit, multiplier);
+    const pagamentos = record.pagamentos || [];
+
+    document.getElementById("paymentSummary").innerHTML = `
+      <div class="pay-sum-row"><span>Valor devido</span><strong>${formatBRL(valorDevido)}</strong></div>
+      <div class="pay-sum-row"><span>Total pago</span><strong>${formatBRL(totalPago)}</strong></div>
+      <div class="pay-sum-row"><span>Saldo restante</span><strong>${formatBRL(saldo)}</strong></div>
+      <div class="pay-sum-row"><span>Status</span><span class="pill ${pillClassForStatus(status)}">${status}</span></div>
+    `;
+
+    document.getElementById("paymentHistory").innerHTML = pagamentos.length
+      ? pagamentos.map((p, idx) => `
+          <div class="pay-hist-row">
+            <span>${formatBRL(parseFloat(p.valor) || 0)} · ${formatSimpleDate(p.data)}${p.obs ? " · " + escapeHtml(p.obs) : ""}</span>
+            <button class="action-btn del" data-idx="${idx}">Remover</button>
+          </div>
+        `).join("")
+      : `<div class="hint">Nenhum pagamento registrado ainda.</div>`;
+
+    document.getElementById("paymentHistory").querySelectorAll(".action-btn.del").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        const updated = [...pagamentos];
+        updated.splice(idx, 1);
+        await savePagamentos(updated);
+      });
+    });
+  }
+
+  async function savePagamentos(newPagamentos){
+    const { collectionName, id } = paymentContext;
+    try{
+      await updateDoc(doc(db, collectionName, id), { pagamentos: newPagamentos });
+      if(collectionName === "inscricoes"){
+        await loadData();
+      }else{
+        await loadFamilyData();
+      }
+      renderFinanceSummary();
+      const list = collectionName === "inscricoes" ? allRecords : allFamilies;
+      const record = list.find(r => r.id === id);
+      if(record) renderPaymentModal(record);
+    }catch(err){
+      console.error(err);
+      paymentModalMsg.textContent = "Não foi possível salvar. Tente novamente.";
+    }
+  }
+
+  document.getElementById("payAddBtn").addEventListener("click", async () => {
+    const valor = parseFloat(document.getElementById("payValor").value);
+    const data = document.getElementById("payData").value;
+    const obs = document.getElementById("payObs").value.trim();
+
+    if(!valor || valor <= 0){
+      paymentModalMsg.textContent = "Informe um valor válido.";
+      return;
+    }
+
+    const list = paymentContext.collectionName === "inscricoes" ? allRecords : allFamilies;
+    const record = list.find(r => r.id === paymentContext.id);
+    const newPagamentos = [...(record.pagamentos || []), { valor, data: data || null, obs: obs || null }];
+
+    document.getElementById("payValor").value = "";
+    document.getElementById("payData").value = "";
+    document.getElementById("payObs").value = "";
+    paymentModalMsg.textContent = "";
+
+    await savePagamentos(newPagamentos);
+  });
+
+  document.getElementById("paymentCloseBtn").addEventListener("click", () => {
+    paymentModalOverlay.classList.remove("show");
+    paymentContext = null;
+  });
+
+  // ---------- Relatório financeiro (impressão / PDF) ----------
+  document.getElementById("reportBtn").addEventListener("click", () => {
+    buildPrintReport();
+    window.print();
+  });
+
+  function buildPrintReport(){
+    const now = new Date().toLocaleString("pt-BR");
+    let arrecadado = 0, esperado = 0;
+
+    const campRows = allRecords.map(r => {
+      const { totalPago, valorDevido, saldo, status } = calcPagamento(r, appConfig.valorAcampamento, 1);
+      arrecadado += totalPago; esperado += valorDevido;
+      return `<tr>
+        <td style="padding:6px;border:1px solid #ccc;">${escapeHtml(r.nomeCompleto || "—")}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${formatBRL(valorDevido)}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${formatBRL(totalPago)}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${formatBRL(saldo)}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${status}</td>
+      </tr>`;
+    }).join("");
+
+    const famRows = allFamilies.map(f => {
+      const mult = f.totalPessoas || (f.membros ? f.membros.length : 1);
+      const { totalPago, valorDevido, saldo, status } = calcPagamento(f, appConfig.valorDomingo, mult);
+      arrecadado += totalPago; esperado += valorDevido;
+      return `<tr>
+        <td style="padding:6px;border:1px solid #ccc;">${escapeHtml(f.responsavelNome || "—")} (família domingo, ${mult} pessoa${mult > 1 ? "s" : ""})</td>
+        <td style="padding:6px;border:1px solid #ccc;">${formatBRL(valorDevido)}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${formatBRL(totalPago)}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${formatBRL(saldo)}</td>
+        <td style="padding:6px;border:1px solid #ccc;">${status}</td>
+      </tr>`;
+    }).join("");
+
+    const pendente = esperado - arrecadado;
+
+    document.getElementById("printReport").innerHTML = `
+      <div style="font-family: Arial, sans-serif;">
+        <h1 style="font-size:20px; margin-bottom:2px;">Relatório financeiro — Acampa LEDS 27</h1>
+        <p style="font-size:12px; color:#555; margin-top:0;">Gerado em ${now}</p>
+        <table style="width:100%; border-collapse:collapse; font-size:12px; margin: 16px 0;">
+          <thead>
+            <tr style="background:#eee;">
+              <th style="text-align:left; padding:6px; border:1px solid #ccc;">Nome</th>
+              <th style="text-align:left; padding:6px; border:1px solid #ccc;">Devido</th>
+              <th style="text-align:left; padding:6px; border:1px solid #ccc;">Pago</th>
+              <th style="text-align:left; padding:6px; border:1px solid #ccc;">Saldo</th>
+              <th style="text-align:left; padding:6px; border:1px solid #ccc;">Status</th>
+            </tr>
+          </thead>
+          <tbody>${campRows}${famRows}</tbody>
+        </table>
+        <h2 style="font-size:15px; margin-bottom:6px;">Resumo geral</h2>
+        <p style="font-size:13px; line-height:1.7;">
+          Total esperado: <strong>${formatBRL(esperado)}</strong><br>
+          Total arrecadado: <strong>${formatBRL(arrecadado)}</strong><br>
+          Total pendente: <strong>${formatBRL(pendente > 0 ? pendente : 0)}</strong>
+        </p>
+      </div>
+    `;
+  }
+
+  // ================= ACAMPAMENTO COMPLETO =================
+  let allRecords = [];
+
+  async function loadData(){
+    document.getElementById("loadingState").style.display = "block";
+    document.getElementById("dataTable").style.display = "none";
+    document.getElementById("emptyState").style.display = "none";
+
+    try{
+      const q = query(inscricoesRef, orderBy("criadoEm", "desc"));
+      const snap = await getDocs(q);
+      allRecords = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      document.getElementById("lastUpdate").textContent =
+        `${allRecords.length} registro(s) · atualizado agora`;
+      renderStats(allRecords);
+      applyFilters();
+    }catch(err){
+      console.error(err);
+      document.getElementById("loadingState").textContent =
+        "Não foi possível carregar os dados. Verifique as regras do Firestore (leitura precisa estar liberada).";
+    }
+  }
+
+  function renderStats(records){
+    document.getElementById("statTotal").textContent = records.length;
+    document.getElementById("statHomens").textContent = records.filter(r => r.sexo === "Homem").length;
+    document.getElementById("statMulheres").textContent = records.filter(r => r.sexo === "Mulher").length;
+    document.getElementById("statMenores").textContent = records.filter(r => r.menorDeIdade).length;
+  }
+
+  function applyFilters(){
+    const search = document.getElementById("fSearch").value.trim().toLowerCase();
+    const sexo = document.getElementById("fSexo").value;
+    const idadeMin = document.getElementById("fIdadeMin").value;
+    const idadeMax = document.getElementById("fIdadeMax").value;
+    const faixa = document.getElementById("fMenor").value;
+
+    let filtered = allRecords.filter(r => {
+      if(search && !(r.nomeCompleto || "").toLowerCase().includes(search)) return false;
+      if(sexo && r.sexo !== sexo) return false;
+      if(idadeMin && r.idade < parseInt(idadeMin, 10)) return false;
+      if(idadeMax && r.idade > parseInt(idadeMax, 10)) return false;
+      if(faixa === "menor" && !r.menorDeIdade) return false;
+      if(faixa === "maior" && r.menorDeIdade) return false;
+      return true;
+    });
+
+    renderTable(filtered);
+  }
+
+  function diasResumo(r){
+    if(!r.diasParticipacao || r.diasParticipacao.length === 0) return "—";
+    if(r.diasModo === "todos" || r.diasParticipacao.length >= 5) return "Todos os dias";
+    return r.diasParticipacao.join(", ");
+  }
+
+  function renderTable(records){
+    const tbody = document.getElementById("tableBody");
+    const table = document.getElementById("dataTable");
+    const empty = document.getElementById("emptyState");
+    const loading = document.getElementById("loadingState");
+
+    loading.style.display = "none";
+
+    if(records.length === 0){
+      table.style.display = "none";
+      empty.style.display = "block";
+      return;
+    }
+
+    empty.style.display = "none";
+    table.style.display = "table";
+
+    tbody.innerHTML = records.map(r => `
+      <tr>
+        <td>${escapeHtml(r.nomeCompleto || "—")}</td>
+        <td>${r.idade ?? "—"}</td>
+        <td>
+          <span class="pill ${r.sexo === 'Homem' ? 'homem' : 'mulher'}">${escapeHtml(r.sexo || "—")}</span>
+          ${r.menorDeIdade ? '<span class="pill minor">Menor</span>' : ''}
+          ${r.menorDeIdade && r.responsavelNome ? `<div class="resp-line">Resp.: ${escapeHtml(r.responsavelNome)} · ${escapeHtml(r.responsavelTelefone || '—')}</div>` : ''}
+        </td>
+        <td>${escapeHtml(r.bairro || "—")}</td>
+        <td>${escapeHtml(r.telefone || "—")}</td>
+        <td>${escapeHtml(diasResumo(r))}</td>
+        <td class="obs-line">${r.observacoes ? escapeHtml(r.observacoes) : "—"}</td>
+        <td>${formatDate(r.criadoEm)}</td>
+        <td class="pay-cell">${(() => {
+          const { totalPago, valorDevido, status } = calcPagamento(r, appConfig.valorAcampamento, 1);
+          return `<span class="pill ${pillClassForStatus(status)}">${status}</span>
+                  <div class="amounts">${formatBRL(totalPago)} / ${formatBRL(valorDevido)}</div>`;
+        })()}</td>
+        <td>
+          <div class="row-actions">
+            <button class="action-btn edit" data-id="${r.id}">Editar</button>
+            <button class="action-btn pay" data-id="${r.id}">Pagamento</button>
+            <button class="action-btn del" data-id="${r.id}">Excluir</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+
+    tbody.querySelectorAll(".action-btn.del").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if(!confirm("Excluir esta inscrição? Essa ação não pode ser desfeita.")) return;
+        try{
+          await deleteDoc(doc(db, "inscricoes", btn.dataset.id));
+          await loadData();
+          renderFinanceSummary();
+        }catch(err){
+          console.error(err);
+          alert("Não foi possível excluir. Tente novamente.");
+        }
+      });
+    });
+
+    tbody.querySelectorAll(".action-btn.edit").forEach(btn => {
+      btn.addEventListener("click", () => openEditModal(btn.dataset.id));
+    });
+
+    tbody.querySelectorAll(".action-btn.pay").forEach(btn => {
+      btn.addEventListener("click", () => openPaymentModal("inscricoes", btn.dataset.id));
+    });
+  }
+
+  ["fSearch","fSexo","fIdadeMin","fIdadeMax","fMenor"].forEach(id => {
+    document.getElementById(id).addEventListener("input", applyFilters);
+    document.getElementById(id).addEventListener("change", applyFilters);
+  });
+
+  document.getElementById("clearFilters").addEventListener("click", () => {
+    document.getElementById("fSearch").value = "";
+    document.getElementById("fSexo").value = "";
+    document.getElementById("fIdadeMin").value = "";
+    document.getElementById("fIdadeMax").value = "";
+    document.getElementById("fMenor").value = "";
+    applyFilters();
+  });
+
+  document.getElementById("refreshBtn").addEventListener("click", async () => {
+    await loadConfig();
+    await Promise.all([loadData(), loadFamilyData()]);
+    renderFinanceSummary();
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", () => {
+    if(allRecords.length === 0) return;
+    const headers = ["Nome completo","Idade","Sexo","Bairro","Telefone","Menor de idade","Responsavel","Telefone responsavel","Dias","Observacoes","Inscrito em"];
+    const rows = allRecords.map(r => [
+      r.nomeCompleto || "",
+      r.idade ?? "",
+      r.sexo || "",
+      r.bairro || "",
+      r.telefone || "",
+      r.menorDeIdade ? "Sim" : "Não",
+      r.responsavelNome || "",
+      r.responsavelTelefone || "",
+      diasResumo(r),
+      r.observacoes || "",
+      formatDate(r.criadoEm)
+    ]);
+    downloadCsv(headers, rows, "inscricoes-acampa-leds-27.csv");
+  });
+
+  function downloadCsv(headers, rows, filename){
+    const csv = [headers, ...rows]
+      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- Edit modal (acampamento) ----------
+  const editModalOverlay = document.getElementById("editModalOverlay");
+  const editModalMsg = document.getElementById("editModalMsg");
+  let editingId = null;
+
+  function openEditModal(id){
+    const record = allRecords.find(r => r.id === id);
+    if(!record) return;
+    editingId = id;
+    editModalMsg.textContent = "";
+
+    document.getElementById("editNome").value = record.nomeCompleto || "";
+    document.getElementById("editIdade").value = record.idade || "";
+    document.getElementById("editSexo").value = record.sexo || "Homem";
+    document.getElementById("editBairro").value = record.bairro || "";
+    document.getElementById("editTelefone").value = record.telefone || "";
+    document.getElementById("editObs").value = record.observacoes || "";
+    document.getElementById("editRespNome").value = record.responsavelNome || "";
+    document.getElementById("editRespTelefone").value = record.responsavelTelefone || "";
+
+    const dias = record.diasParticipacao || [];
+    document.querySelectorAll(".editDia").forEach(cb => {
+      cb.checked = dias.includes(cb.value);
+    });
+
+    editModalOverlay.classList.add("show");
+  }
+
+  document.getElementById("editCancelBtn").addEventListener("click", () => {
+    editModalOverlay.classList.remove("show");
+    editingId = null;
+  });
+
+  document.getElementById("editSaveBtn").addEventListener("click", async () => {
+    if(!editingId) return;
+
+    const nome = document.getElementById("editNome").value.trim();
+    const idade = parseInt(document.getElementById("editIdade").value, 10);
+    const sexo = document.getElementById("editSexo").value;
+    const bairro = document.getElementById("editBairro").value.trim();
+    const telefone = document.getElementById("editTelefone").value.trim();
+    const obs = document.getElementById("editObs").value.trim();
+    const respNome = document.getElementById("editRespNome").value.trim();
+    const respTelefone = document.getElementById("editRespTelefone").value.trim();
+
+    const diasEscolhidos = [];
+    document.querySelectorAll(".editDia:checked").forEach(cb => diasEscolhidos.push(cb.value));
+
+    if(!nome || !idade || !sexo || !bairro){
+      editModalMsg.textContent = "Preencha nome, idade, sexo e bairro.";
+      return;
+    }
+
+    const minor = idade < 18;
+
+    try{
+      await updateDoc(doc(db, "inscricoes", editingId), {
+        nomeCompleto: nome,
+        nomeNormalizado: normalizeName(nome),
+        idade: idade,
+        sexo: sexo,
+        bairro: bairro,
+        telefone: telefone || null,
+        menorDeIdade: minor,
+        responsavelNome: minor ? (respNome || null) : null,
+        responsavelTelefone: minor ? (respTelefone || null) : null,
+        diasModo: diasEscolhidos.length >= 5 ? "todos" : "alguns",
+        diasParticipacao: diasEscolhidos,
+        observacoes: obs || null
+      });
+      editModalOverlay.classList.remove("show");
+      editingId = null;
+      await loadData();
+    }catch(err){
+      console.error(err);
+      editModalMsg.textContent = "Não foi possível salvar. Tente novamente.";
+    }
+  });
+
+  function normalizeName(str){
+    return str
+      .trim()
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ");
+  }
+
+  // ================= SÓ DOMINGO (FAMÍLIAS) =================
+  let allFamilies = [];
+
+  async function loadFamilyData(){
+    document.getElementById("famLoadingState").style.display = "block";
+    document.getElementById("famDataTable").style.display = "none";
+    document.getElementById("famEmptyState").style.display = "none";
+
+    try{
+      const q = query(domingoRef, orderBy("criadoEm", "desc"));
+      const snap = await getDocs(q);
+      allFamilies = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFamilyStats(allFamilies);
+      applyFamilyFilters();
+    }catch(err){
+      console.error(err);
+      document.getElementById("famLoadingState").textContent =
+        "Não foi possível carregar os dados. Verifique as regras do Firestore.";
+    }
+  }
+
+  function renderFamilyStats(families){
+    document.getElementById("statFamTotal").textContent = families.length;
+    const totalPessoas = families.reduce((sum, f) => sum + (f.totalPessoas || (f.membros ? f.membros.length : 0)), 0);
+    document.getElementById("statFamPessoas").textContent = totalPessoas;
+  }
+
+  function applyFamilyFilters(){
+    const search = document.getElementById("fFamSearch").value.trim().toLowerCase();
+    const filtered = allFamilies.filter(f => {
+      if(search && !(f.responsavelNome || "").toLowerCase().includes(search)) return false;
+      return true;
+    });
+    renderFamilyTable(filtered);
+  }
+
+  function renderFamilyTable(families){
+    const tbody = document.getElementById("famTableBody");
+    const table = document.getElementById("famDataTable");
+    const empty = document.getElementById("famEmptyState");
+    const loading = document.getElementById("famLoadingState");
+
+    loading.style.display = "none";
+
+    if(families.length === 0){
+      table.style.display = "none";
+      empty.style.display = "block";
+      return;
+    }
+
+    empty.style.display = "none";
+    table.style.display = "table";
+
+    tbody.innerHTML = families.map(f => {
+      const membrosTxt = (f.membros || []).map(m => `${escapeHtml(m.nome)} (${m.idade ?? '—'})`).join("<br>");
+      const mult = f.totalPessoas || (f.membros ? f.membros.length : 1);
+      const { totalPago, valorDevido, status } = calcPagamento(f, appConfig.valorDomingo, mult);
+      return `
+      <tr>
+        <td>${escapeHtml(f.responsavelNome || "—")}</td>
+        <td>${escapeHtml(f.responsavelTelefone || "—")}</td>
+        <td>${membrosTxt || "—"}</td>
+        <td>${f.totalPessoas ?? (f.membros ? f.membros.length : 0)}</td>
+        <td>${formatDate(f.criadoEm)}</td>
+        <td class="pay-cell">
+          <span class="pill ${pillClassForStatus(status)}">${status}</span>
+          <div class="amounts">${formatBRL(totalPago)} / ${formatBRL(valorDevido)}</div>
+        </td>
+        <td>
+          <div class="row-actions">
+            <button class="action-btn edit" data-id="${f.id}">Editar</button>
+            <button class="action-btn pay" data-id="${f.id}">Pagamento</button>
+            <button class="action-btn del" data-id="${f.id}">Excluir</button>
+          </div>
+        </td>
+      </tr>
+    `;
+    }).join("");
+
+    tbody.querySelectorAll(".action-btn.del").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if(!confirm("Excluir esta família? Essa ação não pode ser desfeita.")) return;
+        try{
+          await deleteDoc(doc(db, "domingoFamilias", btn.dataset.id));
+          await loadFamilyData();
+          renderFinanceSummary();
+        }catch(err){
+          console.error(err);
+          alert("Não foi possível excluir. Tente novamente.");
+        }
+      });
+    });
+
+    tbody.querySelectorAll(".action-btn.edit").forEach(btn => {
+      btn.addEventListener("click", () => openFamilyEditModal(btn.dataset.id));
+    });
+
+    tbody.querySelectorAll(".action-btn.pay").forEach(btn => {
+      btn.addEventListener("click", () => openPaymentModal("domingoFamilias", btn.dataset.id));
+    });
+  }
+
+  document.getElementById("fFamSearch").addEventListener("input", applyFamilyFilters);
+  document.getElementById("clearFamFilters").addEventListener("click", () => {
+    document.getElementById("fFamSearch").value = "";
+    applyFamilyFilters();
+  });
+
+  // ---------- Edit modal (família) ----------
+  const famEditModalOverlay = document.getElementById("famEditModalOverlay");
+  const famEditModalMsg = document.getElementById("famEditModalMsg");
+  const famEditMembers = document.getElementById("famEditMembers");
+  let famEditingId = null;
+
+  function addFamEditMemberRow(nome, idade){
+    const row = document.createElement("div");
+    row.className = "member-edit-row";
+    row.innerHTML = `
+      <input type="text" class="fam-edit-nome" placeholder="Nome" value="${escapeHtml(nome || "")}">
+      <input type="number" class="fam-edit-idade age" placeholder="Idade" value="${idade ?? ""}">
+      <button type="button" title="Remover">&times;</button>
+    `;
+    row.querySelector("button").addEventListener("click", () => {
+      if(famEditMembers.children.length > 1) row.remove();
+    });
+    famEditMembers.appendChild(row);
+  }
+
+  document.getElementById("famEditAddMember").addEventListener("click", () => addFamEditMemberRow("", ""));
+
+  function openFamilyEditModal(id){
+    const record = allFamilies.find(f => f.id === id);
+    if(!record) return;
+    famEditingId = id;
+    famEditModalMsg.textContent = "";
+
+    document.getElementById("famEditNome").value = record.responsavelNome || "";
+    document.getElementById("famEditTelefone").value = record.responsavelTelefone || "";
+
+    famEditMembers.innerHTML = "";
+    const membros = record.membros && record.membros.length ? record.membros : [{nome:"", idade:""}];
+    membros.forEach(m => addFamEditMemberRow(m.nome, m.idade));
+
+    famEditModalOverlay.classList.add("show");
+  }
+
+  document.getElementById("famEditCancelBtn").addEventListener("click", () => {
+    famEditModalOverlay.classList.remove("show");
+    famEditingId = null;
+  });
+
+  document.getElementById("famEditSaveBtn").addEventListener("click", async () => {
+    if(!famEditingId) return;
+
+    const nome = document.getElementById("famEditNome").value.trim();
+    const telefone = document.getElementById("famEditTelefone").value.trim();
+
+    const membros = [];
+    famEditMembers.querySelectorAll(".member-edit-row").forEach(row => {
+      const mNome = row.querySelector(".fam-edit-nome").value.trim();
+      const mIdade = row.querySelector(".fam-edit-idade").value;
+      if(mNome || mIdade){
+        membros.push({ nome: mNome || "—", idade: mIdade ? parseInt(mIdade, 10) : null });
+      }
+    });
+
+    if(!nome || !telefone || membros.length === 0){
+      famEditModalMsg.textContent = "Preencha responsável, telefone e ao menos uma pessoa.";
+      return;
+    }
+
+    try{
+      await updateDoc(doc(db, "domingoFamilias", famEditingId), {
+        responsavelNome: nome,
+        responsavelNomeNormalizado: normalizeName(nome),
+        responsavelTelefone: telefone,
+        membros: membros,
+        totalPessoas: membros.length
+      });
+      famEditModalOverlay.classList.remove("show");
+      famEditingId = null;
+      await loadFamilyData();
+    }catch(err){
+      console.error(err);
+      famEditModalMsg.textContent = "Não foi possível salvar. Tente novamente.";
+    }
+  });
+</script>
+
+</body>
+</html>
